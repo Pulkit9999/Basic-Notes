@@ -12,40 +12,77 @@
 */
 
 let container = document.querySelector('.container');
+const btn = document.getElementById('btn')
+const textarea = document.querySelector('#text-area')
 
-function generateCard(){
-    let notes = document.createElement('div');
-    notes.classList.add('spacer');
-    let textarea = document.getElementById('text-area');
-    notes.innerHTML =`<div class="card" style="width: 18rem;">
+let isEdited = false;
+
+function generateCard() {
+
+  const notes = `<div class="card" style="width: 18rem;">
    
     <div class="card-body">
-      <h5 class="card-title">Card title</h5>
+      <h5 class="card-title">Card-Title</h5>
       <p class="card-text">${textarea.value}</p>
-      <a href="#" class=" del btn btn-primary" >Delete</a>
+      <a href="#" class=" del btn btn-danger" >Delete</a>
+      <a href="#" class=" edit btn btn-primary" >Edit</a>
     </div>
   </div>`
 
-  
+  container.innerHTML +=notes
 
-  container.append(notes);
-  
-  
-  notes.querySelector('.del').addEventListener('click',function(){
-    notes.remove();
-    textarea.value="";
-});
-  
+  textarea.value = ''
+
 }
-document.getElementById('btn').addEventListener('click', function(){
-    let textarea = document.getElementById('text-area');  
-    if(textarea.value ){
-      generateCard();
-    }
-    else{
-      alert("Text Area cannot be empty...please enter something");
-    }
-    
+
+function delHandler(e) {
+  const note = e.target.parentElement.parentElement
+  console.log(note)
+  note.remove();
+  textarea.value = "";
+}
+
+function editHandler(e) {
+
+  const para = e.target.previousElementSibling.previousElementSibling
+
+  btn.value = 'Edit'
+  isEdited = true
+  textarea.value = para.textContent;
+
+
+}
+
+// Event Delegation  or bubbling and capturing
+container.addEventListener('click', (e) => {
+  console.log(e.target)
+  if (e.target.classList.contains('btn-danger')) {
+    delHandler(e)
+  }
+  if (e.target.classList.contains('btn-primary')) {
+    editHandler(e)
+  }
+})
+
+btn.addEventListener('click', function () {
+  let textarea = document.getElementById('text-area');
+
+  let para = document.querySelector('.card-text')
+  if (!isEdited) {
+    // If we are not editing run add function
+    generateCard()
+  }
+  else if (isEdited) {
+    // if we are editing run edit
+    para.textContent = textarea.value;
+    btn.value = 'Add'
+    isEdited = false
+  } else {
+
+    alert('write something')
+
+  }
+
 });
 
 
